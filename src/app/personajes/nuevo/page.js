@@ -1,0 +1,139 @@
+'use client';
+
+
+import {useState} from "react";
+import {useRouter} from "next/navigation";
+
+
+
+export default function NuevoPersonaje() {
+   
+
+        const router = useRouter();
+
+
+        const [formulario, setFormulario] = useState ({
+
+            nombre: '',
+            tripulacion: '',
+            recompensa: ''
+        })
+
+
+       const [error, setError] = useState(null);
+       const [enviando, setEnviando] = useState(false)
+       
+       function manejarCambio(evento) {
+
+        setFormulario({
+
+            ...formulario,
+            [evento.target.name]: evento.target.value 
+
+        });
+       }
+
+
+       async function manejarEnvio(evento) {
+
+        evento.preventDefault();
+        setEnviando(true);
+        setError(null)
+
+       
+
+  try {
+      const respuesta = await fetch('http://localhost:3000/personajes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          nombre: formulario.nombre,
+          tripulacion: formulario.tripulacion,
+          recompensa: Number(formulario.recompensa)
+        })
+      });
+
+      if (!respuesta.ok) {
+        throw new Error('No se pudo crear el personaje');
+      }
+
+      router.push('/');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setEnviando(false);
+    }
+}
+      return (
+    <main className="min-h-screen bg-navy p-8">
+      <h1 className="font-title text-3xl font-bold text-white mb-8">Nuevo Personaje</h1>
+
+      <div className="flex flex-col md:flex-row items-start gap-8">
+        <form onSubmit={manejarEnvio} className="space-y-4 w-full max-w-md">
+          <div>
+            <label className="block text-gray-300 mb-1">Nombre</label>
+            <input
+              type="text"
+              name="nombre"
+              value={formulario.nombre}
+              onChange={manejarCambio}
+              required
+              placeholder="Ej. Monkey D. Luffy"
+              className="bg-white rounded-lg p-2.5 w-full text-ink placeholder-gray-400 outline-none focus:ring-2 focus:ring-gold"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-300 mb-1">Tripulación</label>
+            <input
+              type="text"
+              name="tripulacion"
+              value={formulario.tripulacion}
+              onChange={manejarCambio}
+              required
+              placeholder="Ej. Sombrero de Paja"
+              className="bg-white rounded-lg p-2.5 w-full text-ink placeholder-gray-400 outline-none focus:ring-2 focus:ring-gold"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-300 mb-1">Recompensa</label>
+            <input
+              type="number"
+              name="recompensa"
+              value={formulario.recompensa}
+              onChange={manejarCambio}
+              placeholder="Ej. 3000000000"
+              className="bg-white rounded-lg p-2.5 w-full text-ink placeholder-gray-400 outline-none focus:ring-2 focus:ring-gold"
+            />
+          </div>
+
+          {error && <p className="text-red-400">{error}</p>}
+
+          <div className="flex items-center gap-6 pt-2">
+            <button
+              type="submit"
+              disabled={enviando}
+              className="bg-gold text-white font-semibold px-6 py-2 rounded-lg disabled:opacity-50"
+            >
+              {enviando ? 'Guardando...' : 'Guardar'}
+            </button>
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="text-secondary hover:text-gray-300 px-2 py-2"
+            >
+              Cancelar
+            </button>
+          </div>
+        </form>
+
+        <div className="hidden md:flex w-80 h-80 bg-surface-alt rounded-2xl items-center justify-center shrink-0">
+          <p className="text-secondary">Subir foto</p>
+        </div>
+      </div>
+    </main>
+  );
+}

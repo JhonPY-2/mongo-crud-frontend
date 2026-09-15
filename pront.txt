@@ -1,0 +1,6 @@
+https://github.com/JhonPY-2/mongo-crud-frontend.git
+
+
+
+
+aqui te dejo en donde tienes que subir todo el frontend
