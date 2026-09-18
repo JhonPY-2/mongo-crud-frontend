@@ -1,8 +1,9 @@
 'use client';
 
 
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import {useRouter} from "next/navigation";
+import useAuth from "@/hooks/useAuth";
 
 
 
@@ -10,6 +11,13 @@ export default function NuevoPersonaje() {
    
 
         const router = useRouter();
+        const { token, estaAutenticado } = useAuth();
+
+        useEffect(() => {
+            if (!estaAutenticado) {
+                router.replace('/acceso-denegado');
+            }
+        }, [estaAutenticado, router]);
 
 
         const [formulario, setFormulario] = useState ({
@@ -46,7 +54,8 @@ export default function NuevoPersonaje() {
       const respuesta = await fetch('http://localhost:3000/personajes', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
           nombre: formulario.nombre,
@@ -66,6 +75,11 @@ export default function NuevoPersonaje() {
       setEnviando(false);
     }
 }
+
+  if (!estaAutenticado) {
+    return <main className="min-h-screen bg-navy" />;
+  }
+
       return (
     <main className="min-h-screen bg-navy p-8">
       <h1 className="font-title text-3xl font-bold text-white mb-8">Nuevo Personaje</h1>

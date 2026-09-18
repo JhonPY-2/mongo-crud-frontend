@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import BotonAgregar from '@/components/BotonAgregar';
 
 const colores = [
   { clave: 'messi', color: '#F72585' },
@@ -50,12 +51,7 @@ export default async function Deportes() {
           />
         </div>
 
-        <Link
-          href="/deportes/nuevo"
-          className="bg-gold text-white font-semibold px-4 py-2 rounded-lg whitespace-nowrap"
-        >
-          Agregar atleta
-        </Link>
+        <BotonAgregar href="/deportes/nuevo">Agregar atleta</BotonAgregar>
       </div>
 
       <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

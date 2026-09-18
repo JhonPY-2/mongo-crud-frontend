@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import useAuth from '@/hooks/useAuth';
 
 // Mapeo nombre -> archivo de imagen en /public
 // Si el personaje no tiene imagen propia todavía, cae en el logo como placeholder
@@ -22,6 +23,7 @@ const imagenPorNombre = (nombre) => {
 
 export default function EditarPersonaje({ params }) {
   const router = useRouter();
+  const { token, estaAutenticado } = useAuth();
   const [id, setId] = useState(null);
 
   const [formulario, setFormulario] = useState({
@@ -33,6 +35,12 @@ export default function EditarPersonaje({ params }) {
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
   const [enviando, setEnviando] = useState(false);
+
+  useEffect(() => {
+    if (!estaAutenticado) {
+      router.replace('/acceso-denegado');
+    }
+  }, [estaAutenticado, router]);
 
   useEffect(() => {
     async function cargarDatos() {
@@ -70,7 +78,8 @@ export default function EditarPersonaje({ params }) {
       const respuesta = await fetch(`http://localhost:3000/personajes/${id}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
           nombre: formulario.nombre,
@@ -94,6 +103,10 @@ export default function EditarPersonaje({ params }) {
 
   if (cargando) {
     return <main className="min-h-screen bg-navy p-8">Cargando...</main>;
+  }
+
+  if (!estaAutenticado) {
+    return <main className="min-h-screen bg-navy" />;
   }
 
   return (

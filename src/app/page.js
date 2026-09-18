@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import BotonAgregar from '@/components/BotonAgregar';
 
 const resplandores = [
   { clave: 'luffy', color: '#D4A034' },
@@ -70,12 +71,7 @@ export default async function Home() {
           />
         </div>
 
-        <Link
-          href="/personajes/nuevo"
-          className="bg-gold text-white font-semibold px-4 py-2 rounded-lg whitespace-nowrap"
-        >
-          Agregar personaje
-        </Link>
+        <BotonAgregar href="/personajes/nuevo">Agregar personaje</BotonAgregar>
       </div>
 
       <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

@@ -2,12 +2,20 @@
 
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import useAuth from '@/hooks/useAuth';
 
 const poolHabilidades = ['Velocidad', 'Fuerza', 'Defensa', 'Agilidad', 'Técnica', 'Resistencia', 'Potencia'];
 
 export default function EditarDeporte() {
   const router = useRouter();
   const { id } = useParams();
+  const { token, estaAutenticado } = useAuth();
+
+  useEffect(() => {
+    if (!estaAutenticado) {
+      router.replace('/acceso-denegado');
+    }
+  }, [estaAutenticado, router]);
 
   const [formulario, setFormulario] = useState({
     nombre: '',
@@ -72,7 +80,8 @@ export default function EditarDeporte() {
       const respuesta = await fetch(`http://localhost:3000/atletas/${id}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify({
           nombre: formulario.nombre,
@@ -94,6 +103,10 @@ export default function EditarDeporte() {
     } finally {
       setEnviando(false);
     }
+  }
+
+  if (!estaAutenticado) {
+    return <main className="min-h-screen bg-navy" />;
   }
 
   return (
